@@ -107,8 +107,18 @@ function tipoLink(url: string) {
   return "web";
 }
 
+// Tempo massimo per ogni richiesta esterna: senza, una pagina che non risponde blocca tutto.
+const ATTESA_PAGINA = 15_000;
+const ATTESA_GEMINI = 110_000;
+
 async function scarica(url: string, maxByte = 3_000_000) {
-  const r = await fetch(url, { headers: { "User-Agent": UA, "Accept-Language": "it-IT,it;q=0.9" }, redirect: "follow" });
+  let r: Response;
+  try {
+    r = await fetch(url, { headers: { "User-Agent": UA, "Accept-Language": "it-IT,it;q=0.9" }, redirect: "follow", signal: AbortSignal.timeout(ATTESA_PAGINA) });
+  } catch (e) {
+    if ((e as Error).name === "TimeoutError") throw new Error("la pagina non ha risposto in tempo");
+    throw e;
+  }
   if (!r.ok) throw new Error(`La pagina ha risposto ${r.status}`);
   const buf = new Uint8Array(await r.arrayBuffer());
   return { finale: r.url, tipo: r.headers.get("content-type") ?? "", dati: buf.slice(0, maxByte) };
@@ -160,6 +170,10 @@ async function chiediGemini(parti: unknown[]) {
       contents: [{ role: "user", parts: parti }],
       generationConfig: { temperature: 0.2, responseMimeType: "application/json", responseSchema: SCHEMA },
     }),
+    signal: AbortSignal.timeout(ATTESA_GEMINI),
+  }).catch((e) => {
+    if ((e as Error).name === "TimeoutError") throw new Error("Gemini ci sta mettendo troppo. Riprova tra poco o usa un video più corto.");
+    throw e;
   });
   const j = await r.json().catch(() => ({}));
   if (r.status === 429) throw new Error("Hai esaurito per ora la quota gratuita di Gemini. Riprova tra qualche minuto o domani.");
@@ -244,6 +258,9 @@ Deno.serve(async (req) => {
             } else {
               const descr = meta(html, "og:description") || meta(html, "description");
               const tit = meta(html, "og:title");
+              if (!descr.trim() || /log ?in|accedi|registrati/i.test(tit) && descr.length < 80) {
+                return risposta({ errore: `${tipo === "facebook" ? "Facebook" : "Instagram"} non lascia leggere questo post senza accesso. Scarica il video e caricalo con "Carica il video", oppure copia la didascalia e usa "Da testo".` }, 422);
+              }
               fonte_tipo = "video";
               parti.push({ text: `Post ${tipo} (${finale}).\nTitolo: ${tit}\nDidascalia: ${descr}` });
               avvisiExtra.push(`Da ${tipo} si legge solo la didascalia del post. Se la ricetta è detta nel video, scaricalo e caricalo nella sezione "Da link" con "Carica il video".`);
@@ -251,6 +268,9 @@ Deno.serve(async (req) => {
           }
         } catch (e) {
           if (tipo === "web") return risposta({ errore: `Non riesco ad aprire la pagina: ${(e as Error).message}` }, 400);
+          if (tipo === "facebook" || tipo === "instagram") {
+            return risposta({ errore: `Non riesco ad aprire il post (${(e as Error).message}). Scarica il video e caricalo con "Carica il video", oppure copia la didascalia e usa "Da testo".` }, 422);
+          }
         }
       }
 
@@ -261,7 +281,7 @@ Deno.serve(async (req) => {
         fonte_url = `https://www.youtube.com/watch?v=${id}`;
         fotoUrl = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
         try {
-          const o = await (await fetch(`https://www.youtube.com/oembed?format=json&url=${encodeURIComponent(fonte_url)}`)).json();
+          const o = await (await fetch(`https://www.youtube.com/oembed?format=json&url=${encodeURIComponent(fonte_url)}`, { signal: AbortSignal.timeout(ATTESA_PAGINA) })).json();
           fonte_autore = o.author_name ?? "";
           parti.push({ text: `Video YouTube "${o.title ?? ""}" di ${o.author_name ?? "autore sconosciuto"}. Guardalo, trascrivi la ricetta e compila la scheda.` });
         } catch { parti.push({ text: "Video YouTube con una ricetta. Guardalo, trascrivi la ricetta e compila la scheda." }); }
@@ -269,7 +289,7 @@ Deno.serve(async (req) => {
       } else if (tipo === "tiktok") {
         fonte_tipo = "video";
         try {
-          const o = await (await fetch(`https://www.tiktok.com/oembed?url=${encodeURIComponent(finale)}`)).json();
+          const o = await (await fetch(`https://www.tiktok.com/oembed?url=${encodeURIComponent(finale)}`, { signal: AbortSignal.timeout(ATTESA_PAGINA) })).json();
           fonte_autore = o.author_name ?? "";
           fotoUrl = o.thumbnail_url ?? "";
           parti.push({ text: `Video TikTok di ${o.author_name ?? "?"}. Didascalia:\n${o.title ?? ""}` });
