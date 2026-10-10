@@ -519,8 +519,12 @@ function pannelloAcquisizione(modo) {
         richiesta = { modo: "testo", testo };
       }
       occupato(btn, true, "GNAM sta leggendo…");
-      mostraLettura(true);
-      const out = await DB.ia(richiesta);
+      // Tempo massimo di 2 minuti e pulsante Annulla: l'app non resta mai bloccata
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(new Error("La lettura ci sta mettendo troppo e l'ho interrotta. Per Facebook e Instagram scarica il video e caricalo, oppure incolla la didascalia in \"Da testo\".")), 120_000);
+      mostraLettura(true, () => ctrl.abort(new Error("Lettura annullata.")));
+      let out;
+      try { out = await DB.ia(richiesta, ctrl.signal); } finally { clearTimeout(timer); }
       S.bozza = { privata: false, ...out.bozza };
       S.esito = { completezza: out.completezza, avvisi: out.avvisi ?? [] };
       if (out.completezza === "insufficiente") {
@@ -535,12 +539,13 @@ function pannelloAcquisizione(modo) {
   });
 }
 
-function mostraLettura(on) {
+function mostraLettura(on, annulla) {
   let el = $("#lettura");
   if (on && !el) {
     el = document.createElement("div"); el.id = "lettura";
-    el.innerHTML = `<div class="lettura-box"><img src="img/logo.svg" alt="" width="84" height="84"><p><b>GNAM sta leggendo la ricetta</b></p><p class="piccolo">Per un video può servire fino a un minuto.</p></div>`;
+    el.innerHTML = `<div class="lettura-box"><img src="img/logo.svg" alt="" width="84" height="84"><p><b>GNAM sta leggendo la ricetta</b></p><p class="piccolo">Per un video può servire fino a un minuto.</p><button type="button" class="btn" id="annulla-lettura">Annulla</button></div>`;
     document.body.append(el);
+    el.querySelector("#annulla-lettura").addEventListener("click", () => annulla?.());
   } else if (!on && el) el.remove();
 }
 

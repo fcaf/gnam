@@ -159,8 +159,10 @@ function archivioSupabase(config) {
     },
 
     // ---- intelligenza artificiale
-    async ia(richiesta) {
-      const { data, error } = await sb.functions.invoke("gnam-ai", { body: richiesta });
+    async ia(richiesta, segnale) {
+      const chiamata = sb.functions.invoke("gnam-ai", { body: richiesta, signal: segnale });
+      const stop = new Promise((_, no) => segnale?.addEventListener("abort", () => no(new Error(segnale.reason?.message ?? "Lettura annullata.")), { once: true }));
+      const { data, error } = await Promise.race([chiamata, stop]);
       if (error) {
         const dettaglio = await error.context?.json?.().catch(() => null);
         throw new Error(dettaglio?.errore ?? "Il servizio di lettura non risponde. Controlla che la funzione gnam-ai sia pubblicata.");
