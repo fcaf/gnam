@@ -7,6 +7,6 @@
 //  Se li lasci vuoti, GNAM parte in modalità dimostrativa.
 // =====================================================================
 window.GNAM_CONFIG = {
-  supabaseUrl: "https://lgscysnxvrtvzgpvpdni.supabase.co/rest/v1/",      // es. "https://abcdefghijkl.supabase.co"
+  supabaseUrl: "https://lgscysnxvrtvzgpvpdni.supabase.co",      // es. "https://abcdefghijkl.supabase.co"
   supabaseAnonKey: "sb_publishable_uJC9a6EG2-zuh8OhtPN5gw_St7uOu7-",  // la chiave "anon public" oppure "publishable"
 };
