@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="GNAM">
+  <defs>
+    <linearGradient id="g-fondo" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FF4F5E"/>
+      <stop offset="0.55" stop-color="#FF7A3D"/>
+      <stop offset="1" stop-color="#FFB13B"/>
+    </linearGradient>
+    <linearGradient id="g-ciotola" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#FFF1E8"/>
+    </linearGradient>
+  </defs>
+  <!-- fondo -->
+  <rect width="512" height="512" rx="116" fill="url(#g-fondo)"/>
+  <!-- vapore -->
+  <g fill="none" stroke="#FFFFFF" stroke-width="20" stroke-linecap="round" opacity="0.9">
+    <path d="M196 182c-20-22 20-40 0-66"/>
+    <path d="M256 170c-22-26 22-46 0-78"/>
+    <path d="M316 182c-20-22 20-40 0-66"/>
+  </g>
+  <!-- ciotola sorridente -->
+  <path d="M92 236h328c0 98-73 168-164 168S92 334 92 236z" fill="url(#g-ciotola)"/>
+  <rect x="78" y="220" width="356" height="34" rx="17" fill="#FFFFFF"/>
+  <!-- occhi felici -->
+  <g fill="none" stroke="#E2402F" stroke-width="16" stroke-linecap="round">
+    <path d="M190 298q18-22 36 0"/>
+    <path d="M286 298q18-22 36 0"/>
+  </g>
+  <!-- bocca con linguetta -->
+  <path d="M222 334q34 30 68 0" fill="none" stroke="#E2402F" stroke-width="16" stroke-linecap="round"/>
+  <path d="M262 346c4 22 30 22 30 0" fill="#FF7C8A"/>
+  <!-- fogliolina di basilico -->
+  <path d="M372 222c6-40 40-64 74-60-2 38-32 62-74 60z" fill="#17B26A"/>
+  <path d="M378 218c18-18 34-30 58-44" fill="none" stroke="#0E8A50" stroke-width="5" stroke-linecap="round"/>
+</svg>
