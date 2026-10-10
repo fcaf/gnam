@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GNAM</title>
+<meta name="description" content="GNAM · Gusti Nostri, Archivio Multimediale. Il ricettario della famiglia.">
+<meta name="theme-color" content="#FF5A3C">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="GNAM">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="img/logo.svg" type="image/svg+xml">
+<link rel="icon" href="img/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <a class="salta" href="#vista">Vai al contenuto</a>
+
+  <header class="barra-alta">
+    <a class="marchio" href="#/" aria-label="GNAM, torna alle ricette">
+      <img src="img/logo.svg" alt="" width="36" height="36">
+      <span class="wordmark">gnam</span>
+    </a>
+    <nav class="nav-alta" aria-label="Sezioni">
+      <a href="#/" data-nav="ricettario">Ricette</a>
+      <a href="#/spesa" data-nav="spesa">Spesa</a>
+      <a href="#/famiglia" data-nav="famiglia">Famiglia</a>
+    </nav>
+    <a class="btn primario nav-aggiungi" href="#/nuova" data-nav="nuova"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>Aggiungi</a>
+    <span class="utente" id="nome-utente"></span>
+  </header>
+
+  <div class="striscia-demo" role="note">Modalità dimostrativa · collega Supabase in <code>js/config.js</code> per usarla con la famiglia</div>
+
+  <main id="vista" tabindex="-1"></main>
+
+  <nav class="barra-bassa" aria-label="Sezioni">
+    <a href="#/" data-nav="ricettario"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5C4 4.7 4.7 4 5.5 4H11v15H5.5A1.5 1.5 0 014 17.5zM20 5.5c0-.8-.7-1.5-1.5-1.5H13v15h5.5c.8 0 1.5-.7 1.5-1.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>Ricette</span></a>
+    <a href="#/nuova" data-nav="nuova" class="aggiungi"><span class="tondo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></span><span>Aggiungi</span></a>
+    <a href="#/spesa" data-nav="spesa"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2.2l2.2 10.2a1.5 1.5 0 001.5 1.2h8.3a1.5 1.5 0 001.4-1.1L20.5 8H6.2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9.5" cy="19.5" r="1.4" fill="currentColor"/><circle cx="17" cy="19.5" r="1.4" fill="currentColor"/></svg><span>Spesa</span></a>
+    <a href="#/famiglia" data-nav="famiglia"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5L12 5l8 6.5V19a1 1 0 01-1 1h-4.5v-5h-5v5H5a1 1 0 01-1-1z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>Famiglia</span></a>
+  </nav>
+
+  <script src="js/config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.76.1/dist/umd/supabase.js"></script>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
